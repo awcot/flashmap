@@ -1,25 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import { createContext, useContext } from 'react'
+import './App.css'
+
+import useTree from './useTree'
+
+export const TreeContext = createContext(null)
 
 function App() {
+  const treeManager = useTree('Welcome to Flashmap')
+  const { nodes } = treeManager.tree
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <TreeContext.Provider value={treeManager}>
+      <div className="app">
+        {nodes.map(node => (
+          <Vertex vertex={node} />
+        ))}
+      </div>
+    </TreeContext.Provider>
+  )
 }
 
-export default App;
+function Vertex({ vertex }) {
+  const { actions } = useContext(TreeContext)
+
+  return (
+    <div className="vertex">
+      <span className="vertex-text">{vertex.data.text}</span>
+      <button>+</button>
+    </div>
+  )
+}
+
+export default App

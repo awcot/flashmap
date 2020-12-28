@@ -1,33 +1,36 @@
-import { createContext, useContext } from 'react'
+import { useState, createContext } from 'react'
 import './App.css'
 
 import useTree from './useTree'
+import Vertex from './Vertex'
 
 export const TreeContext = createContext(null)
 
 function App() {
+  const [rootText, setRootText] = useState('')
   const treeManager = useTree('Welcome to Flashmap')
   const { nodes } = treeManager.tree
 
   return (
     <TreeContext.Provider value={treeManager}>
       <div className="app">
-        {nodes.map(node => (
-          <Vertex vertex={node} />
-        ))}
+        {nodes ? (
+          <div className="vertices">
+            {nodes.map(node => (
+              <Vertex key={node.id} vertex={node} />
+            ))}
+          </div>
+        ) : (
+          <input
+            type="text"
+            placeholder="Enter root text"
+            value={rootText}
+            onChange={e => setRootText(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && treeManager.actions.initializeRoot(rootText)}
+          />
+        )}
       </div>
     </TreeContext.Provider>
-  )
-}
-
-function Vertex({ vertex }) {
-  const { actions } = useContext(TreeContext)
-
-  return (
-    <div className="vertex">
-      <span className="vertex-text">{vertex.data.text}</span>
-      <button>+</button>
-    </div>
   )
 }
 

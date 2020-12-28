@@ -18,6 +18,12 @@ const BLANK_INITIAL_STATE = {
 
 const treeReducer = (state, action) => {
   switch (action.type) {
+    case 'initialize-root': {
+      const { rootText } = action
+      const root = { ...ROOT, data: { ...ROOT.data, text: rootText } }
+
+      return { ...BLANK_INITIAL_STATE, nodes: [root] }
+    }
     case 'add-node': {
       const { parentId, data } = action
 
@@ -42,14 +48,12 @@ const treeReducer = (state, action) => {
   }
 }
 
-function useTree(rootText = '') {
-  // TODO: memoize/check performance implications of this
-  const rootNode = { ...ROOT, data: { ...ROOT.data, text: rootText } }
-  const initialState = { ...BLANK_INITIAL_STATE, nodes: [rootNode] }
-  const [tree, dispatch] = useReducer(treeReducer, initialState)
+function useTree() {
+  const [tree, dispatch] = useReducer(treeReducer, BLANK_INITIAL_STATE)
 
   const actions = {
-    addNode: (parentId, data) => dispatch({ type: 'add-node', parentId, data })
+    initializeRoot: (rootText) => dispatch({ type: 'initialize-root', rootText }),
+    addNode: (parentId, data) => dispatch({ type: 'add-node', parentId, data }),
   }
 
   return { tree, dispatch, actions }

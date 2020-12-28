@@ -1,5 +1,9 @@
-.vertex {
+.node {
   border: 1px solid blue;
   max-width: max-content;
   padding: .25em;
+}
+
+.node-form label {
+  text-transform: capitalize;
 }

@@ -1,6 +1,6 @@
 import { useReducer } from 'react'
 
-const ROOT = {
+export const ROOT = {
   id: 0,
   parentId: null,
   data: {
@@ -41,7 +41,17 @@ const treeReducer = (state, action) => {
         children: []
       }
 
-      return { id, nodes: [...nodes, newNode] }
+      return { ...state, id, nodes: [...nodes, newNode] }
+    }
+    case 'edit-node': {
+      const { id, data } = action
+      const nodes = state.nodes.map((node) => {
+        if (node.id !== id) return node // see if `node` is necessary here
+
+        return { ...node, data }
+      })
+
+      return { ...state, nodes }
     }
     default:
       return state
@@ -54,6 +64,7 @@ function useTree() {
   const actions = {
     initializeRoot: (rootText) => dispatch({ type: 'initialize-root', rootText }),
     addNode: (parentId, data) => dispatch({ type: 'add-node', parentId, data }),
+    editNode: (id, data) => dispatch({ type: 'edit-node', id, data }),
   }
 
   return { tree, dispatch, actions }

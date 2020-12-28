@@ -8,7 +8,8 @@ export const TreeContext = createContext(null)
 
 function App() {
   const [rootText, setRootText] = useState('')
-  const treeManager = useTree('Welcome to Flashmap')
+  const treeManager = useTree()
+
   const { nodes } = treeManager.tree
 
   return (
@@ -17,7 +18,7 @@ function App() {
         {nodes ? (
           <div className="vertices">
             {nodes.map(node => (
-              <Vertex key={node.id} vertex={node} />
+              <Vertex key={node.id} node={node} />
             ))}
           </div>
         ) : (

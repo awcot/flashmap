@@ -2,7 +2,7 @@ import { useState, createContext } from 'react'
 import './App.css'
 
 import useTree from './useTree'
-import Vertex from './Vertex'
+import TreeNode from './TreeNode'
 
 export const TreeContext = createContext(null)
 
@@ -16,9 +16,9 @@ function App() {
     <TreeContext.Provider value={treeManager}>
       <div className="app">
         {nodes ? (
-          <div className="vertices">
+          <div className="tree-nodes">
             {nodes.map(node => (
-              <Vertex key={node.id} node={node} />
+              <TreeNode key={node.id} node={node} />
             ))}
           </div>
         ) : (

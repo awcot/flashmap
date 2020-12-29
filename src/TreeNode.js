@@ -3,18 +3,22 @@ import { useState, useEffect, useContext } from 'react'
 import { TreeContext } from './App'
 import { ROOT } from './useTree'
 
-function Vertex({ node }) {
+function TreeNode({ node }) {
   const [mode, setMode] = useState('show')
   const [form, setForm] = useState(node.data)
   const { actions } = useContext(TreeContext)
 
   useEffect(() => {
-    if (mode === 'save') {
+    if (mode === 'confirmEdit') {
       actions.editNode(node.id, form)
       setMode('show')
     }
     if (mode === 'cancel') {
       setForm(node.data)
+      setMode('show')
+    }
+    if (mode === 'add') {
+      actions.addNode(node.id, {})
       setMode('show')
     }
   }, [mode])
@@ -25,14 +29,14 @@ function Vertex({ node }) {
         <span className="node-text">{node.data.text}</span>
       )}
       {mode === 'edit' && (
-        <VertexForm form={form} setForm={setForm} />
+        <TreeNodeForm form={form} setForm={setForm} />
       )}
-      <VertexControls mode={mode} setMode={setMode} />
+      <TreeNodeControls mode={mode} setMode={setMode} />
     </div>
   )
 }
 
-function VertexForm({ form, setForm }) {
+function TreeNodeForm({ form, setForm }) {
   return (
     <div className="node-form">
       {Object.keys(form).map(key => (
@@ -49,7 +53,7 @@ function VertexForm({ form, setForm }) {
   )
 }
 
-function VertexControls({ mode, setMode }) {
+function TreeNodeControls({ mode, setMode }) {
   return (
     <div className="node-controls">
       {mode === 'show' && (
@@ -60,7 +64,7 @@ function VertexControls({ mode, setMode }) {
       )}
       {mode === 'edit' && (
         <>
-          <button onClick={() => setMode('save')}>Save</button>
+          <button onClick={() => setMode('confirmEdit')}>Save</button>
           <button onClick={() => setMode('cancel')}>Cancel</button>
         </>
       )}
@@ -68,4 +72,4 @@ function VertexControls({ mode, setMode }) {
   )
 }
 
-export default Vertex
+export default TreeNode

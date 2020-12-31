@@ -1,30 +1,27 @@
-import { createContext } from 'react'
 import './App.css'
 
 import useTree from './useTree'
 import TreeNode from './TreeNode'
 import TreeNodeForm from './TreeNodeForm'
 
-export const TreeContext = createContext(null)
-
 function App() {
-  const treeManager = useTree()
+  const { tree, actions } = useTree()
 
-  const { nodes } = treeManager.tree
+  const selectedNode = tree.nodes.find(n => n.id === tree.selectedId)
 
   return (
-    <TreeContext.Provider value={treeManager}>
-      <div className="app">
-        {nodes && (
-          <div className="tree-nodes">
-            {nodes.map(node => (
-              <TreeNode key={node.id} node={node} />
-            ))}
-          </div>
-        )}
-        <TreeNodeForm />
-      </div>
-    </TreeContext.Provider>
+    <div className="app">
+      {tree.nodes && (
+        <div className="tree-nodes">
+          {tree.nodes.map(node => (
+            <TreeNode key={node.id} node={node} />
+          ))}
+        </div>
+      )}
+      {selectedNode && (
+        <TreeNodeForm selectedNode={selectedNode} actions={actions} />
+      )}
+    </div>
   )
 }
 

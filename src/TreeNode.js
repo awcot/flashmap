@@ -1,14 +1,10 @@
-import { useState, useEffect, useContext } from 'react'
-
-import { TreeContext } from './App'
+import { useState, useEffect } from 'react'
 
 function TreeNode({ node }) {
   const [mode, setMode] = useState('show')
-  const { actions } = useContext(TreeContext)
 
   useEffect(() => {
     if (mode === 'add') {
-      actions.addNode(node.id, {})
       setMode('show')
     }
   }, [mode])

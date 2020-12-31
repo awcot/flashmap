@@ -28,7 +28,7 @@ const treeReducer = (state, action) => {
 
       const id = state.id + 1
       const nodes = state.nodes.map((node) => {
-        if (node.id !== parentId) return node // see if `node` is necessary here
+        if (node.id !== parentId) return node // TODO see if `node` is necessary here
 
         return { ...node, children: [...node.children, id] }
       })
@@ -45,12 +45,12 @@ const treeReducer = (state, action) => {
     case 'edit-node': {
       const { id, data } = action
       const nodes = state.nodes.map((node) => {
-        if (node.id !== id) return node // see if `node` is necessary here
+        if (node.id !== id) return node // TODO see if `node` is necessary here
 
         return { ...node, data }
       })
 
-      return { ...state, nodes }
+      return { ...state, selectedId: null, nodes }
     }
     default:
       return state

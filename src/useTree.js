@@ -1,26 +1,25 @@
 import { useReducer } from 'react'
 
-export const ROOT = {
+const ROOT = {
   id: 0,
   parentId: null,
   data: {
     text: '',
-    question: '',
-    answer: ''
   },
   children: []
 }
 
 const BLANK_INITIAL_STATE = {
   id: 0,
-  nodes: undefined
+  selectedId: 0,
+  nodes: [ROOT]
 }
 
 const treeReducer = (state, action) => {
   switch (action.type) {
     case 'initialize-root': {
       const { rootText } = action
-      const root = { ...ROOT, data: { ...ROOT.data, text: rootText } }
+      const root = { ...ROOT, data: { text: rootText } }
 
       return { ...BLANK_INITIAL_STATE, nodes: [root] }
     }

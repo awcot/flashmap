@@ -1,35 +1,16 @@
 import { useEffect } from 'react'
 
 function TreeNode({ node, actions, selected }) {
+  const add = () => actions.addNode(node.id)
+  const edit = () => actions.selectNode(node.id)
+
   return (
     <div className={`node ${selected ? 'node--selected' : ''}`}>
       <span className="node-text">{node.data?.text}</span>
       <div className="node-controls">
-        <button onClick={() => actions.addNode(node.id)}>Add</button>
-        <button onClick={() => {}}>Edit</button>
+        <button onClick={add}>Add</button>
+        <button onClick={edit}>Edit</button>
       </div>
-    </div>
-  )
-}
-
-
-function TreeNodeControls({ mode, setMode, actions }) {
-  const add =  actions.addNode
-
-  return (
-    <div className="node-controls">
-      {mode === 'show' && (
-        <>
-          <button onClick={() => setMode('add')}>Add</button>
-          <button onClick={() => setMode('edit')}>Edit</button>
-        </>
-      )}
-      {mode === 'edit' && (
-        <>
-          <button onClick={() => setMode('confirmEdit')}>Save</button>
-          <button onClick={() => setMode('cancel')}>Cancel</button>
-        </>
-      )}
     </div>
   )
 }

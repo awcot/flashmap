@@ -4,6 +4,7 @@ function TreeNodeForm({ selectedNode = {}, actions }) {
   const [form, setForm] = useState(selectedNode.data)
 
   const save = () => actions.saveNode(selectedNode.id, form)
+  const cancel = () => actions.selectNode(null)
 
   return (
     <div className="node-form">
@@ -18,6 +19,7 @@ function TreeNodeForm({ selectedNode = {}, actions }) {
         </label>
       ))}
       <button onClick={save}>Save</button>
+      <button onClick={cancel}>Cancel</button>
     </div>
   )
 }

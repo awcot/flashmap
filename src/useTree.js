@@ -52,6 +52,9 @@ const treeReducer = (state, action) => {
 
       return { ...state, selectedId: null, nodes }
     }
+    case 'select-node': {
+      return { ...state, selectedId: action.id }
+    }
     default:
       return state
   }
@@ -63,6 +66,7 @@ function useTree() {
   const actions = {
     addNode: (parentId) => dispatch({ type: 'add-node', parentId }),
     saveNode: (id, data) => dispatch({ type: 'save-node', id, data }),
+    selectNode: (id) => dispatch({ type: 'select-node', id }),
   }
 
   return { tree, dispatch, actions }

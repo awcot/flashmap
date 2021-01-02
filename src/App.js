@@ -1,7 +1,7 @@
 import './App.css'
 
 import useTree from './useTree'
-import TreeNode from './TreeNode'
+import Tree from './Tree'
 import TreeNodeForm from './TreeNodeForm'
 
 function App() {
@@ -13,14 +13,7 @@ function App() {
     <div className="app">
       {tree.nodes && (
         <div className="tree-nodes">
-          {tree.nodes.map(node => (
-            <TreeNode
-              key={node.id}
-              node={node}
-              actions={actions}
-              selected={selectedNode === node}
-            />
-          ))}
+          <Tree nodes={tree.nodes} actions={actions} />
         </div>
       )}
       {selectedNode && (

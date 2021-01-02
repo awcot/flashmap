@@ -1,5 +1,3 @@
-import { useEffect } from 'react'
-
 function TreeNode({ node, actions, selected }) {
   const add = () => actions.addNode(node.id)
   const edit = () => actions.selectNode(node.id)

@@ -8,6 +8,10 @@
   padding: .25em;
 }
 
+.node--selected {
+  background-color: lightblue;
+}
+
 .node-form {
   position: absolute;
   right: 0;

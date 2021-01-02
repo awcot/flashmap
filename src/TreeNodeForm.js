@@ -3,7 +3,7 @@ import { useState, useEffect, useContext } from 'react'
 function TreeNodeForm({ selectedNode = {}, actions }) {
   const [form, setForm] = useState(selectedNode.data)
 
-  const save = () => actions.editNode(selectedNode.id, form)
+  const save = () => actions.saveNode(selectedNode.id, form)
 
   return (
     <div className="node-form">

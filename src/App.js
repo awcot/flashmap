@@ -14,7 +14,12 @@ function App() {
       {tree.nodes && (
         <div className="tree-nodes">
           {tree.nodes.map(node => (
-            <TreeNode key={node.id} node={node} />
+            <TreeNode
+              key={node.id}
+              node={node}
+              actions={actions}
+              selected={selectedNode === node}
+            />
           ))}
         </div>
       )}

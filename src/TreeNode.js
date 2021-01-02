@@ -1,26 +1,21 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 
-function TreeNode({ node }) {
-  const [mode, setMode] = useState('show')
-
-  useEffect(() => {
-    if (mode === 'add') {
-      setMode('show')
-    }
-  }, [mode])
-
+function TreeNode({ node, actions, selected }) {
   return (
-    <div className="node">
-      {mode === 'show' && (
-        <span className="node-text">{node.data.text}</span>
-      )}
-      <TreeNodeControls mode={mode} setMode={setMode} />
+    <div className={`node ${selected ? 'node--selected' : ''}`}>
+      <span className="node-text">{node.data?.text}</span>
+      <div className="node-controls">
+        <button onClick={() => actions.addNode(node.id)}>Add</button>
+        <button onClick={() => {}}>Edit</button>
+      </div>
     </div>
   )
 }
 
 
-function TreeNodeControls({ mode, setMode }) {
+function TreeNodeControls({ mode, setMode, actions }) {
+  const add =  actions.addNode
+
   return (
     <div className="node-controls">
       {mode === 'show' && (

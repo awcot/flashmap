@@ -1,5 +1,7 @@
 .app {
   display: relative;
+  height: 100vh;
+  background: #eee;
 }
 
 .node {
@@ -26,4 +28,17 @@
 
 .tree-children {
   display: flex;
+}
+
+.tree-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.d3-tree {
+  border-radius: 10px;
+  box-shadow: 0 0 15px lightgrey;
+  background: white;
 }

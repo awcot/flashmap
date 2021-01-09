@@ -12,9 +12,7 @@ function App() {
 
   return (
     <div className="app">
-      <div className="tree-wrapper">
-        <DrawTree />
-      </div>
+      <DrawTree />
       {/* {tree.nodes && ( */}
       {/*   <div className="tree-nodes"> */}
       {/*     <Tree nodes={tree.nodes} actions={actions} /> */}

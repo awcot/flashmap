@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { hierarchy, tree, select, linkHorizontal } from 'd3'
 
 const HEIGHT = 850
@@ -30,9 +30,20 @@ const TEST_DATA = {
   ]
 }
 
+function DrawNode({ node }) {
+  const d3Node = useRef(null)
+
+  return (
+    <g ref={d3Node}>
+      <div>NODE</div>
+    </g>
+  )
+}
+
 // Adapted from https://observablehq.com/@d3/tidy-tree
 function DrawTree() {
-  const d3tree = useRef(null)
+  const d3Tree = useRef(null)
+  const [nodes, setNodes] = useState([])
 
   const initTree = (data) => {
     const root = hierarchy(data)
@@ -91,23 +102,30 @@ function DrawTree() {
   }
 
   useEffect(() => {
-    if (d3tree.current) {
+    if (d3Tree.current) {
       const root = initTree(TEST_DATA)
-      const svg = select(d3tree.current)
+      setNodes(root.descendants())
+      const svg = select(d3Tree.current)
 
       drawLinks(root, svg)
 
       return () => svg.selectAll("*").remove()
     }
-  }, [d3tree])
+  }, [d3Tree])
 
   return (
-    <svg
-      className="d3-tree"
-      ref={d3tree}
-      height={HEIGHT}
-      width={WIDTH}
-    />
+    <div className="tree-wrapper">
+      <svg
+        className="d3-tree"
+        ref={d3Tree}
+        height={HEIGHT}
+        width={WIDTH}
+      >
+        {nodes.map((node, i) => (
+          <DrawNode key={`${node.data.name}_${i}`} node={node} />
+        ))}
+      </svg>
+    </div>
   )
 }
 

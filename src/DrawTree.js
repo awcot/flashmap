@@ -40,21 +40,44 @@ const TEST_DATA = {
   ]
 }
 
-function DrawNode({ node }) {
-  const d3Node = useRef(null)
+function DrawLink({ link }) {
+  const d3LinkRef = useRef(null)
+  const { source, target } = link
+  const d = linkHorizontal()({
+    source: [source.y, source.x],
+    target: [target.y - (NODE_W / 2), target.x],
+  })
 
   useEffect(() => {
-    if (d3Node.current) {
-      select(d3Node.current)
-        .attr("transform", `translate(${NODE_H},${HEIGHT/2})`)
+    if (d3LinkRef.current) {
+      select(d3LinkRef.current)
+        .attr("transform", `translate(${NODE_H}, ${HEIGHT/2})`)
     }
-  }, [d3Node])
+  }, [d3LinkRef])
 
+  return (
+    <path
+      ref={d3LinkRef}
+      className="node-link"
+      d={d}
+    />
+  )
+}
+
+function DrawNode({ node }) {
+  const d3NodeRef = useRef(null)
   const x = node.y - (NODE_W / 2)
   const y = node.x - (NODE_H / 2)
 
+  useEffect(() => {
+    if (d3NodeRef.current) {
+      select(d3NodeRef.current)
+        .attr("transform", `translate(${NODE_H}, ${HEIGHT/2})`)
+    }
+  }, [d3NodeRef])
+
   return (
-    <g ref={d3Node}>
+    <g ref={d3NodeRef}>
       {/* x and y swapped due to horizontal growth */}
       <foreignObject height={NODE_H} width={NODE_W} x={x} y={y}>
         <div className="node-card">
@@ -70,6 +93,7 @@ function DrawTree() {
   const d3TreeRef = useRef(null)
   const treeWrapperRef = useRef(null)
   const [nodes, setNodes] = useState([])
+  const [links, setLinks] = useState([])
   const [svg, setSvg] = useState(null)
   const [{ x, y, k }, setTransform] = useState({ x: 0, y: 0, k: 1 })
 
@@ -78,23 +102,6 @@ function DrawTree() {
     root.dx = NODE_H * 1.125
     root.dy = NODE_W * 1.5
     return tree().nodeSize([root.dx, root.dy])(root)
-  }
-
-  const drawLinks = (root, svg) => {
-    const g = svg.append("g")
-      .attr("transform", `translate(${NODE_H},${HEIGHT/2})`)
-
-    g.append("g")
-      .attr("fill", "none")
-      .attr("stroke", "#555")
-      .attr("stroke-opacity", 0.4)
-      .attr("stroke-width", 1.5)
-    .selectAll("path")
-      .data(root.links())
-      .join("path")
-        .attr("d", linkHorizontal()
-            .x(d => d.y)
-            .y(d => d.x))
   }
 
   const initZoom = (svg) => {
@@ -113,18 +120,12 @@ function DrawTree() {
       const root = initTree(TEST_DATA)
       initZoom(svg)
       setNodes(root.descendants())
-      drawLinks(root, svg)
+      setLinks(root.links())
       return () => {
         svg.on("zoom", null)
-        svg.selectAll("path").remove()
       }
     }
   }, [svg])
-
-  // useEffect(() => {
-  //   const dims = treeWrapperRef.current.getBoundingClientRect()
-  //   setTranslateBy([dims.width / 2.5, dims.height / 2])
-  // }, [])
 
   return (
     <div className="tree-wrapper" ref={treeWrapperRef}>
@@ -135,9 +136,15 @@ function DrawTree() {
         width={WIDTH}
       >
         <g transform={`translate(${x}, ${y}) scale(${k})`}>
+          {links.map((link, i) => (
+            <DrawLink
+              key={`link_${i}`}
+              link={link}
+            />
+          ))}
           {nodes.map((node, i) => (
             <DrawNode
-              key={`${node.data.name}_${i}`}
+              key={`node_${i}`}
               node={node}
             />
           ))}

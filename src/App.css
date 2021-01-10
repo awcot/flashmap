@@ -43,12 +43,19 @@
   background: white;
 }
 
+.node-link {
+  fill: none;
+  stroke: #555;
+  /* stroke-opacity: 0.4; */
+  stroke-width: 1.5;
+}
+
 .node-card {
   height: 100%;
   width: 100%;
   border-radius: 5px;
   border: 1px solid lightgrey;
   padding: .75rem;
-  /* background: white; */
+  background: white;
   /* box-shadow: 0 0 15px lightergrey; */
 }

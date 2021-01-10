@@ -46,5 +46,9 @@
 .node-card {
   height: 100%;
   width: 100%;
-  border: 1px dashed blue;
+  border-radius: 5px;
+  border: 1px solid lightgrey;
+  padding: .75rem;
+  /* background: white; */
+  /* box-shadow: 0 0 15px lightergrey; */
 }

@@ -42,3 +42,9 @@
   box-shadow: 0 0 15px lightgrey;
   background: white;
 }
+
+.node-card {
+  height: 100%;
+  width: 100%;
+  border: 1px dashed blue;
+}

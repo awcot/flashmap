@@ -32,7 +32,7 @@ const TEST_DATA = {
           children: [],
         },
         {
-          name: 'Protoypal inheritance',
+          name: 'Prototypical inheritance',
           children: [],
         },
       ],
@@ -78,7 +78,6 @@ function DrawNode({ node }) {
 
   return (
     <g ref={d3NodeRef}>
-      {/* x and y swapped due to horizontal growth */}
       <foreignObject height={NODE_H} width={NODE_W} x={x} y={y}>
         <div className="node-card">
           <div>{node.data.name}</div>

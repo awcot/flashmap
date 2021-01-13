@@ -1,8 +1,14 @@
+h1 {
+  margin: 0
+}
+
 .app {
   display: relative;
   height: 100vh;
   background: #eee;
 }
+
+.spacer * > * { margin-top: .75rem }
 
 .node {
   border: 1px solid blue;
@@ -13,13 +19,6 @@
 
 .node--selected {
   background-color: lightblue;
-}
-
-.node-form {
-  position: absolute;
-  right: 0;
-  top: 0;
-  border: 1px dashed green;
 }
 
 .node-form label {
@@ -51,6 +50,8 @@
 }
 
 .node-card {
+  display: flex;
+  flex-direction: column;
   height: 100%;
   width: 100%;
   border-radius: 5px;
@@ -58,4 +59,8 @@
   padding: .75rem;
   background: white;
   /* box-shadow: 0 0 15px lightergrey; */
+}
+
+.node-card button:first-of-type {
+  margin-top: auto
 }

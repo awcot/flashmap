@@ -38,23 +38,27 @@ import { useReducer } from 'react'
 const ROOT = {
   id: 0,
   parentId: null,
-  name: '',
+  text: {
+    name: '',
+  },
   children: []
 }
 
 const BLANK_NODE = {
   id: undefined,
   parentId: undefined,
-  name: '',
-  question: '',
-  answer: '',
+  text: {
+    name: '',
+    question: '',
+    answer: ''
+  },
   children: []
 }
 
 const BLANK_INITIAL_STATE = {
   id: 0,
   selectedId: 0,
-  nodes: { ...ROOT }
+  nodes: [ROOT]
 }
 
 const treeReducer = (state, action) => {
@@ -70,6 +74,7 @@ const treeReducer = (state, action) => {
       })
 
       const newNode = { ...BLANK_NODE, id, parentId }
+      console.log(newNode)
 
       return { ...state, id, selectedId: id, nodes: [...nodes, newNode] }
     }
@@ -78,7 +83,7 @@ const treeReducer = (state, action) => {
       const nodes = state.nodes.map((node) => {
         if (node.id !== id) return node
 
-        return { ...node, data }
+        return { ...node, text: data }
       })
 
       return { ...state, selectedId: null, nodes }

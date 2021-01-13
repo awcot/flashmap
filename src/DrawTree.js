@@ -43,7 +43,7 @@ function DrawTree() {
 
   useEffect(() => {
     if (svg) {
-      const root = initTree(treeData.nodes)
+      const root = initTree(treeData.nodes[0])
       initZoom(svg)
       setNodes(root.descendants())
       setLinks(root.links())

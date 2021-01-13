@@ -1,90 +1,15 @@
 import { useState, useEffect, useRef } from 'react'
-import { hierarchy, tree, select, linkHorizontal, zoomIdentity, zoom as d3zoom } from 'd3'
+import { hierarchy, tree, select, zoom as d3zoom } from 'd3'
 
-const HEIGHT = 850
-const WIDTH = 1200
-const NODE_H = 200
-const NODE_W = 300
-const TEST_DATA = {
-  name: 'JavaScript',
-  children: [
-    {
-      name: 'Functions',
-      children: [],
-    },
-    {
-      name: 'Numbers',
-      children: [],
-    },
-    {
-      name: 'Strings',
-      children: [
-        {
-          name: 'The toString() function'
-        }
-      ],
-    },
-    {
-      name: 'Objects',
-      children: [
-        {
-          name: 'Constructing them',
-          children: [],
-        },
-        {
-          name: 'Prototypical inheritance',
-          children: [],
-        },
-      ],
-    },
-  ]
-}
+import useTree from './useTree'
+import DrawLink from './DrawLink'
+import DrawNode from './DrawNode'
 
-function DrawLink({ link }) {
-  const d3LinkRef = useRef(null)
-  const { source, target } = link
-  const d = linkHorizontal()({
-    source: [source.y, source.x],
-    target: [target.y - (NODE_W / 2), target.x],
-  })
-
-  useEffect(() => {
-    if (d3LinkRef.current) {
-      select(d3LinkRef.current)
-        .attr("transform", `translate(${NODE_H}, ${HEIGHT/2})`)
-    }
-  }, [d3LinkRef])
-
-  return (
-    <path
-      ref={d3LinkRef}
-      className="node-link"
-      d={d}
-    />
-  )
-}
-
-function DrawNode({ node }) {
-  const d3NodeRef = useRef(null)
-  const x = node.y - (NODE_W / 2)
-  const y = node.x - (NODE_H / 2)
-
-  useEffect(() => {
-    if (d3NodeRef.current) {
-      select(d3NodeRef.current)
-        .attr("transform", `translate(${NODE_H}, ${HEIGHT/2})`)
-    }
-  }, [d3NodeRef])
-
-  return (
-    <g ref={d3NodeRef}>
-      <foreignObject height={NODE_H} width={NODE_W} x={x} y={y}>
-        <div className="node-card">
-          <div>{node.data.name}</div>
-        </div>
-      </foreignObject>
-    </g>
-  )
+const DIMS = {
+  height: 850,
+  width: 1200,
+  nodeHeight: 200,
+  nodeWidth: 300
 }
 
 // Adapted from https://observablehq.com/@d3/tidy-tree
@@ -96,10 +21,12 @@ function DrawTree() {
   const [svg, setSvg] = useState(null)
   const [{ x, y, k }, setTransform] = useState({ x: 0, y: 0, k: 1 })
 
+  const { tree: treeData, actions } = useTree()
+
   const initTree = (data) => {
     const root = hierarchy(data)
-    root.dx = NODE_H * 1.125
-    root.dy = NODE_W * 1.5
+    root.dx = DIMS.nodeHeight * 1.125
+    root.dy = DIMS.nodeWidth * 1.5
     return tree().nodeSize([root.dx, root.dy])(root)
   }
 
@@ -116,7 +43,7 @@ function DrawTree() {
 
   useEffect(() => {
     if (svg) {
-      const root = initTree(TEST_DATA)
+      const root = initTree(treeData.nodes)
       initZoom(svg)
       setNodes(root.descendants())
       setLinks(root.links())
@@ -124,27 +51,30 @@ function DrawTree() {
         svg.on("zoom", null)
       }
     }
-  }, [svg])
+  }, [svg, treeData.nodes])
 
   return (
     <div className="tree-wrapper" ref={treeWrapperRef}>
       <svg
         className="d3-tree"
         ref={d3TreeRef}
-        height={HEIGHT}
-        width={WIDTH}
+        height={DIMS.height}
+        width={DIMS.width}
       >
         <g transform={`translate(${x}, ${y}) scale(${k})`}>
           {links.map((link, i) => (
             <DrawLink
               key={`link_${i}`}
               link={link}
+              {...DIMS}
             />
           ))}
           {nodes.map((node, i) => (
             <DrawNode
               key={`node_${i}`}
               node={node}
+              actions={actions}
+              {...DIMS}
             />
           ))}
         </g>

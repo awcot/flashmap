@@ -1,29 +1,60 @@
 import { useReducer } from 'react'
 
+// const TEST_DATA = {
+//   name: 'JavaScript',
+//   children: [
+//     {
+//       name: 'Functions',
+//       children: [],
+//     },
+//     {
+//       name: 'Numbers',
+//       children: [],
+//     },
+//     {
+//       name: 'Strings',
+//       children: [
+//         {
+//           name: 'The toString() function'
+//         }
+//       ],
+//     },
+//     {
+//       name: 'Objects',
+//       children: [
+//         {
+//           name: 'Constructing them',
+//           children: [],
+//         },
+//         {
+//           name: 'Prototypical inheritance',
+//           children: [],
+//         },
+//       ],
+//     },
+//   ]
+// }
+
 const ROOT = {
   id: 0,
   parentId: null,
-  data: {
-    text: '',
-  },
+  name: '',
   children: []
 }
 
 const BLANK_NODE = {
   id: undefined,
   parentId: undefined,
-  data: {
-    text: '',
-    question: '',
-    answer: '',
-  },
+  name: '',
+  question: '',
+  answer: '',
   children: []
 }
 
 const BLANK_INITIAL_STATE = {
   id: 0,
   selectedId: 0,
-  nodes: [ROOT]
+  nodes: { ...ROOT }
 }
 
 const treeReducer = (state, action) => {
@@ -33,7 +64,7 @@ const treeReducer = (state, action) => {
 
       const id = state.id + 1
       const nodes = state.nodes.map((node) => {
-        if (node.id !== parentId) return node // TODO see if `node` is necessary here
+        if (node.id !== parentId) return node
 
         return { ...node, children: [...node.children, id] }
       })
@@ -45,7 +76,7 @@ const treeReducer = (state, action) => {
     case 'save-node': {
       const { id, data } = action
       const nodes = state.nodes.map((node) => {
-        if (node.id !== id) return node // TODO see if `node` is necessary here
+        if (node.id !== id) return node
 
         return { ...node, data }
       })

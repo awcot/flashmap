@@ -23,8 +23,14 @@ function DrawTree() {
 
   const { tree: treeData, actions } = useTree()
 
+  const children = (d) => {
+    if (!d) return
+
+    return d.children.map(c => treeData.nodes.find(n => n.id === c.id))
+  }
+
   const initTree = (data) => {
-    const root = hierarchy(data)
+    const root = hierarchy(data, children)
     root.dx = DIMS.nodeHeight * 1.125
     root.dy = DIMS.nodeWidth * 1.5
     return tree().nodeSize([root.dx, root.dy])(root)
@@ -52,6 +58,7 @@ function DrawTree() {
       }
     }
   }, [svg, treeData.nodes])
+  console.log(nodes)
 
   return (
     <div className="tree-wrapper" ref={treeWrapperRef}>

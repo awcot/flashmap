@@ -74,6 +74,25 @@ const addChild = (subtree, parentId, newNode) => {
   }
 }
 
+const deleteSubtree = (subtree, id) => {
+  if (!subtree.children.length) return subtree
+  const index = subtree.children.findIndex(c => c.id === id)
+  if (index >= 0) {
+    return {
+      ...subtree,
+      children: [
+        ...subtree.children.slice(0, index),
+        ...subtree.children.slice(index + 1)
+      ]
+    }
+  } else {
+    return {
+      ...subtree,
+      children: subtree.children.map(c => deleteSubtree(c, id))
+    }
+  }
+}
+
 const treeReducer = (state, action) => {
   switch (action.type) {
     case 'add-node': {
@@ -94,8 +113,15 @@ const treeReducer = (state, action) => {
 
       return { ...state, nodeData }
     }
-    case 'select-node': {
-      return { ...state, selectedId: action.id }
+    case 'delete-node': {
+      const { id, children } = action
+      const tree = deleteSubtree(state.tree, id)
+      const nodeData = { ...state.nodeData }
+      children.forEach(c => delete nodeData[c.id])
+      delete nodeData[id]
+
+      // TODO: figure out why DrawNodes are attempting to be rendered
+      return { ...state, tree, nodeData }
     }
     default:
       return state
@@ -108,7 +134,9 @@ function useTree() {
   const actions = {
     addNode: (parentId) => dispatch({ type: 'add-node', parentId }),
     saveNode: (id, data) => dispatch({ type: 'save-node', id, data }),
-    selectNode: (id) => dispatch({ type: 'select-node', id }),
+    deleteNode: ({ id, children }) => (
+      dispatch({ type: 'delete-node', id, children })
+    ),
   }
 
   return { state, dispatch, actions }

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { hierarchy, tree, select, zoom as d3zoom } from 'd3'
+import { hierarchy, tree, select, zoomIdentity, zoom as d3zoom } from 'd3'
 
 import useTree from './useTree'
 import DrawLink from './DrawLink'
@@ -19,7 +19,12 @@ function DrawTree() {
   const [nodes, setNodes] = useState([])
   const [links, setLinks] = useState([])
   const [svg, setSvg] = useState(null)
-  const [{ x, y, k }, setTransform] = useState({ x: 0, y: 0, k: 1 })
+  const [{ x, y, k }, setTransform] = useState({
+    x: DIMS.nodeHeight,
+    y: DIMS.height / 2,
+    k: 1
+  })
+  const zoomInitialised = useRef(false)
 
   const { state, actions } = useTree()
 
@@ -30,28 +35,29 @@ function DrawTree() {
     return tree().nodeSize([root.dx, root.dy])(root)
   }
 
-  const initZoom = (svg) => {
-    const zoom = d3zoom().on("zoom", (event) => {
-      setTransform(event.transform)
-    })
-    svg.call(zoom)
-  }
-
   useEffect(() => {
     setSvg(select(d3TreeRef.current))
   }, [])
 
   useEffect(() => {
-    if (svg) {
-      const root = initTree(state.tree)
-      initZoom(svg)
-      setNodes(root.descendants())
-      setLinks(root.links())
+    const root = initTree(state.tree)
+    setNodes(root.descendants())
+    setLinks(root.links())
+  }, [state.tree])
+
+  useEffect(() => {
+    if (svg && !zoomInitialised.current) {
+      svg.call(d3zoom().transform, zoomIdentity.translate(x, y).scale(k));
+      const zoom = d3zoom().on("zoom", (event) => {
+        setTransform(event.transform)
+      })
+      svg.call(zoom).on("dblclick.zoom", null)
+      zoomInitialised.current = true
       return () => {
         svg.on("zoom", null)
       }
     }
-  }, [svg, state.tree])
+  }, [svg, x, y, k])
 
   return (
     <div className="tree-wrapper" ref={treeWrapperRef}>
@@ -66,7 +72,7 @@ function DrawTree() {
             <DrawLink
               key={`link_${i}`}
               link={link}
-              {...DIMS}
+              nodeWidth={DIMS.nodeWidth}
             />
           ))}
           {nodes.map((node, i) => (
@@ -74,7 +80,8 @@ function DrawTree() {
               key={`node_${i}`}
               node={node}
               actions={actions}
-              {...DIMS}
+              nodeWidth={DIMS.nodeWidth}
+              nodeHeight={DIMS.nodeHeight}
             />
           ))}
         </g>

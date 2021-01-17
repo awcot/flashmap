@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
-import { select } from 'd3'
+import { useState } from 'react'
 
 function Node({ node, actions, initialMode = 'show' }) {
   const [mode, setMode] = useState(initialMode)
@@ -49,20 +48,12 @@ function Node({ node, actions, initialMode = 'show' }) {
   )
 }
 
-function DrawNode({ node, actions, height, nodeHeight, nodeWidth }) {
-  const d3NodeRef = useRef(null)
+function DrawNode({ node, actions, nodeHeight, nodeWidth }) {
   const x = node.y - (nodeWidth / 2)
   const y = node.x - (nodeHeight / 2)
 
-  useEffect(() => {
-    if (d3NodeRef.current) {
-      select(d3NodeRef.current)
-        .attr("transform", `translate(${nodeHeight}, ${height/2})`)
-    }
-  }, [d3NodeRef])
-
   return (
-    <g ref={d3NodeRef}>
+    <g>
       <foreignObject height={nodeHeight} width={nodeWidth} x={x} y={y}>
         <Node node={node} actions={actions} />
       </foreignObject>

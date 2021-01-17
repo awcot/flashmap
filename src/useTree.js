@@ -37,7 +37,6 @@ import { useReducer } from 'react'
 
 const ROOT = {
   id: 0,
-  parentId: null,
   text: {
     name: '',
   },
@@ -46,7 +45,6 @@ const ROOT = {
 
 const BLANK_NODE = {
   id: undefined,
-  parentId: undefined,
   text: {
     name: '',
     question: '',
@@ -58,25 +56,33 @@ const BLANK_NODE = {
 const BLANK_INITIAL_STATE = {
   id: 0,
   selectedId: 0,
-  nodes: [ROOT]
+  tree: { ...ROOT }
+}
+
+const addChild = (subtree, parentId, newNode) => {
+  if (subtree.id === parentId) return {
+    ...subtree,
+    children: [
+      ...subtree.children,
+      newNode
+    ]
+  }
+  if (!subtree.children.length) return subtree
+
+  return {
+    ...subtree,
+    children: subtree.children.map(c => addChild(c, parentId, newNode))
+  }
 }
 
 const treeReducer = (state, action) => {
   switch (action.type) {
     case 'add-node': {
       const { parentId } = action
-
       const id = state.id + 1
-      const nodes = state.nodes.map((node) => {
-        if (node.id !== parentId) return node
-
-        return { ...node, children: [...node.children, id] }
-      })
-
-      const newNode = { ...BLANK_NODE, id, parentId }
-      console.log(newNode)
-
-      return { ...state, id, selectedId: id, nodes: [...nodes, newNode] }
+      const newNode = { ...BLANK_NODE, id }
+      const tree = addChild(state.tree, parentId, newNode)
+      return { ...state, tree, id }
     }
     case 'save-node': {
       const { id, data } = action
@@ -97,7 +103,7 @@ const treeReducer = (state, action) => {
 }
 
 function useTree() {
-  const [tree, dispatch] = useReducer(treeReducer, BLANK_INITIAL_STATE)
+  const [state, dispatch] = useReducer(treeReducer, BLANK_INITIAL_STATE)
 
   const actions = {
     addNode: (parentId) => dispatch({ type: 'add-node', parentId }),
@@ -105,7 +111,7 @@ function useTree() {
     selectNode: (id) => dispatch({ type: 'select-node', id }),
   }
 
-  return { tree, dispatch, actions }
+  return { state, dispatch, actions }
 }
 
 export default useTree

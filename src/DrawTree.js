@@ -21,16 +21,10 @@ function DrawTree() {
   const [svg, setSvg] = useState(null)
   const [{ x, y, k }, setTransform] = useState({ x: 0, y: 0, k: 1 })
 
-  const { tree: treeData, actions } = useTree()
-
-  const children = (d) => {
-    if (!d) return
-
-    return d.children.map(c => treeData.nodes.find(n => n.id === c.id))
-  }
+  const { state, actions } = useTree()
 
   const initTree = (data) => {
-    const root = hierarchy(data, children)
+    const root = hierarchy(data)
     root.dx = DIMS.nodeHeight * 1.125
     root.dy = DIMS.nodeWidth * 1.5
     return tree().nodeSize([root.dx, root.dy])(root)
@@ -49,7 +43,7 @@ function DrawTree() {
 
   useEffect(() => {
     if (svg) {
-      const root = initTree(treeData.nodes[0])
+      const root = initTree(state.tree)
       initZoom(svg)
       setNodes(root.descendants())
       setLinks(root.links())
@@ -57,8 +51,7 @@ function DrawTree() {
         svg.on("zoom", null)
       }
     }
-  }, [svg, treeData.nodes])
-  console.log(nodes)
+  }, [svg, state.tree])
 
   return (
     <div className="tree-wrapper" ref={treeWrapperRef}>

@@ -59,6 +59,7 @@ function DrawTree() {
     }
   }, [svg, x, y, k])
 
+  // TODO: links and nodes re-rendered every translate change, measure & memoize
   return (
     <div className="tree-wrapper" ref={treeWrapperRef}>
       <svg
@@ -79,6 +80,7 @@ function DrawTree() {
             <DrawNode
               key={`node_${i}`}
               node={node}
+              data={state.nodeData[node.data.id]}
               actions={actions}
               nodeWidth={DIMS.nodeWidth}
               nodeHeight={DIMS.nodeHeight}

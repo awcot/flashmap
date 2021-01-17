@@ -1,11 +1,11 @@
 import { useState } from 'react'
 
-function Node({ node, actions, initialMode = 'show' }) {
+function Node({ node, data, actions, initialMode = 'show' }) {
   const [mode, setMode] = useState(initialMode)
   const [form, setForm] = useState({})
 
   const edit = () => {
-    setForm(node.data.text)
+    setForm(data)
     setMode('edit')
   }
 
@@ -23,7 +23,13 @@ function Node({ node, actions, initialMode = 'show' }) {
     <div className="node-card spacer">
       {mode === 'show' && (
         <>
-          <h1>{node.data.text.name || 'Click edit to enter a name'}</h1>
+          <h1>{data.name || 'Click edit to enter a name'}</h1>
+          {data.question && (
+            <div>{data.question}</div>
+          )}
+          {data.answer && (
+            <div>{data.answer}</div>
+          )}
           <button onClick={edit}>Edit</button>
           <button onClick={() => actions.addNode(node.data.id)}>Add</button>
         </>
@@ -48,14 +54,14 @@ function Node({ node, actions, initialMode = 'show' }) {
   )
 }
 
-function DrawNode({ node, actions, nodeHeight, nodeWidth }) {
+function DrawNode({ node, data, actions, nodeHeight, nodeWidth }) {
   const x = node.y - (nodeWidth / 2)
   const y = node.x - (nodeHeight / 2)
 
   return (
     <g>
       <foreignObject height={nodeHeight} width={nodeWidth} x={x} y={y}>
-        <Node node={node} actions={actions} />
+        <Node node={node} data={data} actions={actions} />
       </foreignObject>
     </g>
   )

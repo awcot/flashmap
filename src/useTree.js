@@ -1,40 +1,5 @@
 import { useReducer } from 'react'
 
-// const TEST_DATA = {
-//   name: 'JavaScript',
-//   children: [
-//     {
-//       name: 'Functions',
-//       children: [],
-//     },
-//     {
-//       name: 'Numbers',
-//       children: [],
-//     },
-//     {
-//       name: 'Strings',
-//       children: [
-//         {
-//           name: 'The toString() function'
-//         }
-//       ],
-//     },
-//     {
-//       name: 'Objects',
-//       children: [
-//         {
-//           name: 'Constructing them',
-//           children: [],
-//         },
-//         {
-//           name: 'Prototypical inheritance',
-//           children: [],
-//         },
-//       ],
-//     },
-//   ]
-// }
-
 const ROOT = {
   id: 0,
   children: []
@@ -120,7 +85,6 @@ const treeReducer = (state, action) => {
       children.forEach(c => delete nodeData[c.id])
       delete nodeData[id]
 
-      // TODO: figure out why DrawNodes are attempting to be rendered
       return { ...state, tree, nodeData }
     }
     default:

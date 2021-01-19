@@ -1,31 +1,33 @@
 import { renderHook, act } from '@testing-library/react-hooks'
 import useTree from './useTree'
 
-it('initializes with a single node', () => {
-  const { result } = renderHook(() => useTree())
-
-  expect(result.current.tree.nodes.length).toBe(1)
-})
-
-it('adds a new node to the root', () => {
+it('adds new nodes', () => {
   const { result } = renderHook(() => useTree())
 
   act(() => {
     result.current.actions.addNode(0)
+    result.current.actions.addNode(0)
   })
 
-  const [nodeZero, nodeOne] = result.current.tree.nodes
-  expect(result.current.tree.nodes.length).toBe(2)
-  expect(nodeZero.children).toContain(nodeOne.id)
-  expect(nodeOne.parentId).toBe(nodeZero.id)
+  const { children } = result.current.state.tree
+  expect(children.length).toBe(2)
+
+  act(() => {
+    result.current.actions.addNode(children[0].id)
+  })
+
+  const { children: grandchildren } = result.current.state.tree.children[0]
+  expect(grandchildren.length).toEqual(1)
 })
 
 it('saves changes to existing nodes', () => {
   const { result } = renderHook(() => useTree())
 
   act(() => {
-    result.current.actions.saveNode(0, { text: 'Testing node text' })
+    result.current.actions.saveNode(0, { name: 'Root name' })
   })
 
-  expect(result.current.tree.nodes[0].data.text).toBe('Testing node text')
+  const data = Object.values(result.current.state.nodeData)[0]
+
+  expect(data.name).toBe('Root name')
 })

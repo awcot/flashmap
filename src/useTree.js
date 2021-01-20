@@ -13,14 +13,16 @@ const BLANK_NODE = {
 const BLANK_DATA = {
   name: '',
   question: '',
-  answer: ''
+  answer: '',
+  children: [],
+  parentId: null
 }
 
 const BLANK_INITIAL_STATE = {
   id: 0,
   selectedId: 0,
   tree: ROOT,
-  nodeData: { 0: { name: '' } }
+  nodeData: { 0: { name: '', children: [], parentId: null } }
 }
 
 const addChild = (subtree, parentId, newNode) => {
@@ -65,7 +67,14 @@ const treeReducer = (state, action) => {
       const id = state.id + 1
       const newNode = { ...BLANK_NODE, id }
       const tree = addChild(state.tree, parentId, newNode)
-      const nodeData = { ...state.nodeData, [id]: BLANK_DATA }
+      const nodeData = {
+        ...state.nodeData,
+        [parentId]: {
+          ...state.nodeData[parentId],
+          children: [...state.nodeData[parentId].children, id]
+        },
+        [id]: BLANK_DATA
+      }
 
       return { ...state, tree, id, nodeData }
     }
@@ -79,10 +88,10 @@ const treeReducer = (state, action) => {
       return { ...state, nodeData }
     }
     case 'delete-node': {
-      const { id, children } = action
+      const { id } = action
       const tree = deleteSubtree(state.tree, id)
       const nodeData = { ...state.nodeData }
-      children.forEach(c => delete nodeData[c.id])
+      nodeData[id].children.forEach(c => delete nodeData[c.id])
       delete nodeData[id]
 
       return { ...state, tree, nodeData }
@@ -98,9 +107,7 @@ function useTree() {
   const actions = {
     addNode: (parentId) => dispatch({ type: 'add-node', parentId }),
     saveNode: (id, data) => dispatch({ type: 'save-node', id, data }),
-    deleteNode: ({ id, children }) => (
-      dispatch({ type: 'delete-node', id, children })
-    ),
+    deleteNode: (id) => dispatch({ type: 'delete-node', id }),
   }
 
   return { state, dispatch, actions }

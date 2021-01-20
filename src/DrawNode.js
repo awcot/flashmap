@@ -19,6 +19,8 @@ function Node({ node, data, actions, initialMode = 'show' }) {
     cancel()
   }
 
+  if (!data) return null
+
   return (
     <div className="node-card spacer">
       {mode === 'show' && (
@@ -33,7 +35,7 @@ function Node({ node, data, actions, initialMode = 'show' }) {
           <button onClick={edit}>Edit</button>
           <button onClick={() => actions.addNode(node.data.id)}>Add</button>
           {node.data.id > 0 && (
-            <button onClick={() => actions.deleteNode(node.data)}>Delete</button>
+            <button onClick={() => actions.deleteNode(node.data.id)}>Delete</button>
           )}
         </>
       )}

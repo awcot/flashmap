@@ -47,7 +47,7 @@ function DrawTree() {
 
   useEffect(() => {
     if (svg && !zoomInitialised.current) {
-      svg.call(d3zoom().transform, zoomIdentity.translate(x, y).scale(k));
+      svg.call(d3zoom().transform, zoomIdentity.translate(x, y).scale(k))
       const zoom = d3zoom().on("zoom", (event) => {
         setTransform(event.transform)
       })

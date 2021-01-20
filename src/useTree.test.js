@@ -31,3 +31,25 @@ it('saves changes to existing nodes', () => {
 
   expect(data.name).toBe('Root name')
 })
+
+describe('the delete-node action', () => {
+  fit('removes leaf nodes and their node data', () => {
+    const { result } = renderHook(() => useTree())
+
+    act(() => {
+      result.current.actions.addNode(0)
+    })
+
+    const child = result.current.state.nodeData['1']
+    expect(result.current.state.tree.children.length).toEqual(1)
+    expect(typeof child).toEqual('object')
+
+    act(() => {
+      result.current.actions.deleteNode(child)
+    })
+
+    const childGone = result.current.state.nodeData['1']
+    expect(result.current.state.tree.children.length).toEqual(0)
+    expect(typeof childGone).toEqual('undefined')
+  })
+})

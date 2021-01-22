@@ -24,8 +24,6 @@ function DrawTree() {
     y: DIMS.height / 2,
     k: 1
   })
-  const zoomInitialised = useRef(false)
-
   const { state, actions } = useTree()
 
   const initTree = (data) => {
@@ -40,26 +38,27 @@ function DrawTree() {
   }, [])
 
   useEffect(() => {
+    if (svg) {
+      svg.call(
+        d3zoom().transform,
+        zoomIdentity.translate(DIMS.nodeHeight, DIMS.height / 2).scale(1)
+      )
+      const zoom = d3zoom().on("zoom", (event) => {
+        setTransform(event.transform)
+      })
+      svg.call(zoom).on("dblclick.zoom", null)
+      return () => {
+        svg.on("zoom", null)
+      }
+    }
+  }, [svg])
+
+  useEffect(() => {
     const root = initTree(state.tree)
     setNodes(root.descendants())
     setLinks(root.links())
   }, [state.tree])
 
-  useEffect(() => {
-    if (svg && !zoomInitialised.current) {
-      svg.call(d3zoom().transform, zoomIdentity.translate(x, y).scale(k))
-      const zoom = d3zoom().on("zoom", (event) => {
-        setTransform(event.transform)
-      })
-      svg.call(zoom).on("dblclick.zoom", null)
-      zoomInitialised.current = true
-      return () => {
-        svg.on("zoom", null)
-      }
-    }
-  }, [svg, x, y, k])
-
-  // TODO: links and nodes re-rendered every translate change, measure & memoize
   return (
     <div className="tree-wrapper" ref={treeWrapperRef}>
       <svg
@@ -69,16 +68,16 @@ function DrawTree() {
         width={DIMS.width}
       >
         <g transform={`translate(${x}, ${y}) scale(${k})`}>
-          {links.map((link, i) => (
+          {links.map((link) => (
             <DrawLink
-              key={`link_${i}`}
+              key={`${link.source.data.id}->${link.target.data.id}`}
               link={link}
               nodeWidth={DIMS.nodeWidth}
             />
           ))}
-          {nodes.map((node, i) => (
+          {nodes.map((node) => (
             <DrawNode
-              key={`node_${i}`}
+              key={node.data.id}
               node={node}
               data={state.nodeData[node.data.id]}
               actions={actions}

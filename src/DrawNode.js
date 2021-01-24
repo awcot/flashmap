@@ -1,11 +1,11 @@
 import { useState } from "react";
 
-function Node({ node, data, actions, initialMode = "show" }) {
+function Node({ node, actions, initialMode = "show" }) {
   const [mode, setMode] = useState(initialMode);
   const [form, setForm] = useState({});
 
   const edit = () => {
-    setForm(data);
+    setForm(node.data.text);
     setMode("edit");
   };
 
@@ -15,19 +15,17 @@ function Node({ node, data, actions, initialMode = "show" }) {
   };
 
   const save = () => {
-    actions.saveNode(node.data.id, form);
+    actions.updateNode(node.data.id, form);
     cancel();
   };
 
-  if (!data) return null;
-
   return (
-    <div className="node-card spacer">
+    <div className="node-card">
       {mode === "show" && (
         <>
-          <h1>{data.name || "Click edit to enter a name"}</h1>
-          {data.question && <div>{data.question}</div>}
-          {data.answer && <div>{data.answer}</div>}
+          <h1>{node.data.text.name || "Click edit to enter a name"}</h1>
+          {node.data.text.question && <div>{node.data.text.question}</div>}
+          {node.data.text.answer && <div>{node.data.text.answer}</div>}
           <button onClick={edit}>Edit</button>
           <button onClick={() => actions.addNode(node.data.id)}>Add</button>
           {node.data.id > 0 && (

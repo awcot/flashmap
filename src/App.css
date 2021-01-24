@@ -8,7 +8,7 @@ h1 {
   background: #eee;
 }
 
-.spacer * > * { margin-top: .75rem }
+.spacer > * + * { margin-top: .75rem }
 
 .node {
   border: 1px solid blue;

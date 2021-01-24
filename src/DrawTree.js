@@ -59,6 +59,8 @@ function DrawTree() {
     setLinks(root.links());
   }, [state.tree]);
 
+  console.log(nodes)
+
   return (
     <div className="tree-wrapper" ref={treeWrapperRef}>
       <svg
@@ -79,7 +81,6 @@ function DrawTree() {
             <DrawNode
               key={node.data.id}
               node={node}
-              data={state.nodeData[node.data.id]}
               actions={actions}
               nodeWidth={DIMS.nodeWidth}
               nodeHeight={DIMS.nodeHeight}

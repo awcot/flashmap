@@ -1,28 +1,25 @@
 import { useReducer } from "react";
 
-const ROOT = {
-  id: 0,
-  children: [],
-};
-
 const BLANK_NODE = {
   id: undefined,
+  text: {
+    name: "",
+    question: "",
+    answer: "",
+  },
   children: [],
-};
-
-const BLANK_DATA = {
-  name: "",
-  question: "",
-  answer: "",
-  children: [],
-  parentId: null,
 };
 
 const BLANK_INITIAL_STATE = {
   id: 0,
   selectedId: 0,
-  tree: ROOT,
-  nodeData: { 0: { name: "", children: [], parentId: null } },
+  tree: {
+    id: 0,
+    text: {
+      name: "",
+    },
+    children: [],
+  },
 };
 
 const addChild = (subtree, parentId, newNode) => {
@@ -32,10 +29,23 @@ const addChild = (subtree, parentId, newNode) => {
       children: [...subtree.children, newNode],
     };
   if (!subtree.children.length) return subtree;
-
   return {
     ...subtree,
     children: subtree.children.map((c) => addChild(c, parentId, newNode)),
+  };
+};
+
+const updateNode = (subtree, id, data) => {
+  if (subtree.id === id) {
+    return {
+      ...subtree,
+      text: { ...data },
+    };
+  }
+  if (!subtree.children.length) return subtree;
+  return {
+    ...subtree,
+    children: subtree.children.map((c) => updateNode(c, id, data)),
   };
 };
 
@@ -50,12 +60,11 @@ const deleteSubtree = (subtree, id) => {
         ...subtree.children.slice(index + 1),
       ],
     };
-  } else {
-    return {
-      ...subtree,
-      children: subtree.children.map((c) => deleteSubtree(c, id)),
-    };
   }
+  return {
+    ...subtree,
+    children: subtree.children.map((c) => deleteSubtree(c, id)),
+  };
 };
 
 const treeReducer = (state, action) => {
@@ -65,34 +74,20 @@ const treeReducer = (state, action) => {
       const id = state.id + 1;
       const newNode = { ...BLANK_NODE, id };
       const tree = addChild(state.tree, parentId, newNode);
-      const nodeData = {
-        ...state.nodeData,
-        [parentId]: {
-          ...state.nodeData[parentId],
-          children: [...state.nodeData[parentId].children, id],
-        },
-        [id]: BLANK_DATA,
-      };
 
-      return { ...state, tree, id, nodeData };
+      return { ...state, id, tree };
     }
-    case "save-node": {
+    case "update-node": {
       const { id, data } = action;
-      const nodeData = {
-        ...state.nodeData,
-        [id]: data,
-      };
+      const tree = updateNode(state.tree, id, data);
 
-      return { ...state, nodeData };
+      return { ...state, tree };
     }
     case "delete-node": {
       const { id } = action;
       const tree = deleteSubtree(state.tree, id);
-      const nodeData = { ...state.nodeData };
-      nodeData[id].children.forEach((c) => delete nodeData[c.id]);
-      delete nodeData[id];
 
-      return { ...state, tree, nodeData };
+      return { ...state, tree };
     }
     default:
       return state;
@@ -104,7 +99,7 @@ function useTree() {
 
   const actions = {
     addNode: (parentId) => dispatch({ type: "add-node", parentId }),
-    saveNode: (id, data) => dispatch({ type: "save-node", id, data }),
+    updateNode: (id, data) => dispatch({ type: "update-node", id, data }),
     deleteNode: (id) => dispatch({ type: "delete-node", id }),
   };
 

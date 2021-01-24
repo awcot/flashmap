@@ -1,53 +1,51 @@
-import { useState } from 'react'
+import { useState } from "react";
 
-function Node({ node, data, actions, initialMode = 'show' }) {
-  const [mode, setMode] = useState(initialMode)
-  const [form, setForm] = useState({})
+function Node({ node, data, actions, initialMode = "show" }) {
+  const [mode, setMode] = useState(initialMode);
+  const [form, setForm] = useState({});
 
   const edit = () => {
-    setForm(data)
-    setMode('edit')
-  }
+    setForm(data);
+    setMode("edit");
+  };
 
   const cancel = () => {
-    setForm({})
-    setMode('show')
-  }
+    setForm({});
+    setMode("show");
+  };
 
   const save = () => {
-    actions.saveNode(node.data.id, form)
-    cancel()
-  }
+    actions.saveNode(node.data.id, form);
+    cancel();
+  };
 
-  if (!data) return null
+  if (!data) return null;
 
   return (
     <div className="node-card spacer">
-      {mode === 'show' && (
+      {mode === "show" && (
         <>
-          <h1>{data.name || 'Click edit to enter a name'}</h1>
-          {data.question && (
-            <div>{data.question}</div>
-          )}
-          {data.answer && (
-            <div>{data.answer}</div>
-          )}
+          <h1>{data.name || "Click edit to enter a name"}</h1>
+          {data.question && <div>{data.question}</div>}
+          {data.answer && <div>{data.answer}</div>}
           <button onClick={edit}>Edit</button>
           <button onClick={() => actions.addNode(node.data.id)}>Add</button>
           {node.data.id > 0 && (
-            <button onClick={() => actions.deleteNode(node.data.id)}>Delete</button>
+            <button onClick={() => actions.deleteNode(node.data.id)}>
+              Delete
+            </button>
           )}
         </>
       )}
-      {mode === 'edit' && (
+      {mode === "edit" && (
         <div className="node-form">
-          {Object.keys(form).map(key => (
+          {Object.keys(form).map((key) => (
             <label key={key}>
               {key}:
               <input
                 type="text"
                 value={form[key]}
-                onChange={e => setForm({ ...form, [key]: e.target.value })}
+                onChange={(e) => setForm({ ...form, [key]: e.target.value })}
               />
             </label>
           ))}
@@ -56,12 +54,12 @@ function Node({ node, data, actions, initialMode = 'show' }) {
         </div>
       )}
     </div>
-  )
+  );
 }
 
 function DrawNode({ node, data, actions, nodeHeight, nodeWidth }) {
-  const x = node.y - (nodeWidth / 2)
-  const y = node.x - (nodeHeight / 2)
+  const x = node.y - nodeWidth / 2;
+  const y = node.x - nodeHeight / 2;
 
   return (
     <g>
@@ -69,7 +67,7 @@ function DrawNode({ node, data, actions, nodeHeight, nodeWidth }) {
         <Node node={node} data={data} actions={actions} />
       </foreignObject>
     </g>
-  )
+  );
 }
 
-export default DrawNode
+export default DrawNode;

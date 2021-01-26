@@ -97,13 +97,7 @@ const treeReducer = (state, action) => {
 function useTree() {
   const [state, dispatch] = useReducer(treeReducer, BLANK_INITIAL_STATE);
 
-  const actions = {
-    addNode: (parentId) => dispatch({ type: "add-node", parentId }),
-    updateNode: (id, data) => dispatch({ type: "update-node", id, data }),
-    deleteNode: (id) => dispatch({ type: "delete-node", id }),
-  };
-
-  return { state, dispatch, actions };
+  return { state, dispatch };
 }
 
 export default useTree;

@@ -24,7 +24,7 @@ function DrawTree() {
     y: DIMS.height / 2,
     k: 1,
   });
-  const { state, actions } = useTree();
+  const { state, dispatch } = useTree();
 
   const initTree = (data) => {
     const root = hierarchy(data);
@@ -59,8 +59,6 @@ function DrawTree() {
     setLinks(root.links());
   }, [state.tree]);
 
-  console.log(nodes)
-
   return (
     <div className="tree-wrapper" ref={treeWrapperRef}>
       <svg
@@ -81,7 +79,7 @@ function DrawTree() {
             <DrawNode
               key={node.data.id}
               node={node}
-              actions={actions}
+              dispatch={dispatch}
               nodeWidth={DIMS.nodeWidth}
               nodeHeight={DIMS.nodeHeight}
             />

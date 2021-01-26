@@ -1,3 +1,4 @@
+import React from "react";
 import { linkHorizontal } from "d3";
 
 function DrawLink({ link, nodeWidth }) {
@@ -10,4 +11,4 @@ function DrawLink({ link, nodeWidth }) {
   return <path className="node-link" d={d} />;
 }
 
-export default DrawLink;
+export default React.memo(DrawLink);

@@ -36,7 +36,9 @@ function Node({ node, dispatch, initialMode = "show" }) {
           </button>
           {node.data.id > 0 && (
             <button
-              onClick={() => dispatch({ type: "delete-node", id: node.data.id })}
+              onClick={() =>
+                dispatch({ type: "delete-node", id: node.data.id })
+              }
             >
               Delete
             </button>

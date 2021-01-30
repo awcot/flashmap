@@ -31,6 +31,7 @@ function Node({ node, dispatch, initialMode = "show" }) {
             onClick={() =>
               dispatch({ type: "add-node", parentId: node.data.id })
             }
+            data-testid={`add-btn-${node.data.id}`}
           >
             Add
           </button>
@@ -39,6 +40,7 @@ function Node({ node, dispatch, initialMode = "show" }) {
               onClick={() =>
                 dispatch({ type: "delete-node", id: node.data.id })
               }
+              data-testid={`delete-btn-${node.data.id}`}
             >
               Delete
             </button>

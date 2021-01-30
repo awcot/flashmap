@@ -1,16 +1,12 @@
 import { useState, useEffect, useRef } from "react";
-import { hierarchy, tree, select, zoomIdentity, zoom as d3zoom } from "d3";
+import { hierarchy, tree } from "d3";
 
 import useTree from "./useTree";
+import useD3Zoom from "./useD3Zoom";
 import DrawLink from "./DrawLink";
 import DrawNode from "./DrawNode";
 
-const DIMS = {
-  height: 850,
-  width: 1200,
-  nodeHeight: 200,
-  nodeWidth: 300,
-};
+import { DIMS } from "./App";
 
 // Adapted from https://observablehq.com/@d3/tidy-tree
 function DrawTree() {
@@ -18,12 +14,7 @@ function DrawTree() {
   const treeWrapperRef = useRef(null);
   const [nodes, setNodes] = useState([]);
   const [links, setLinks] = useState([]);
-  const [svg, setSvg] = useState(null);
-  const [{ x, y, k }, setTransform] = useState({
-    x: DIMS.nodeHeight,
-    y: DIMS.height / 2,
-    k: 1,
-  });
+  const { x, y, k } = useD3Zoom(d3TreeRef);
   const { state, dispatch } = useTree();
 
   const initTree = (data) => {
@@ -32,26 +23,6 @@ function DrawTree() {
     root.dy = DIMS.nodeWidth * 1.5;
     return tree().nodeSize([root.dx, root.dy])(root);
   };
-
-  useEffect(() => {
-    setSvg(select(d3TreeRef.current));
-  }, []);
-
-  useEffect(() => {
-    if (svg) {
-      svg.call(
-        d3zoom().transform,
-        zoomIdentity.translate(DIMS.nodeHeight, DIMS.height / 2).scale(1)
-      );
-      const zoom = d3zoom().on("zoom", (event) => {
-        setTransform(event.transform);
-      });
-      svg.call(zoom).on("dblclick.zoom", null);
-      return () => {
-        svg.on("zoom", null);
-      };
-    }
-  }, [svg]);
 
   useEffect(() => {
     const root = initTree(state.tree);
@@ -66,6 +37,7 @@ function DrawTree() {
         ref={d3TreeRef}
         height={DIMS.height}
         width={DIMS.width}
+        data-testid="d3-tree-svg"
       >
         <g transform={`translate(${x}, ${y}) scale(${k})`}>
           {links.map((link) => (
